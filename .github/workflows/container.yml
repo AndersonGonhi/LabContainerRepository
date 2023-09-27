@@ -1,0 +1,28 @@
+name: Atualizar Imagem no Registro de Container Azure
+
+on:
+  push:
+    branches:
+      - main  # Substitua pelo nome da sua branch principal
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do Código
+      uses: actions/checkout@v2
+
+    - name: Fazer Login no Registro de Container
+      run: |
+        docker login Labcontainer.azurecr.io -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.PASSWORD_DOCKER_USER }}
+
+    - name: Construir a Imagem Docker
+      run: |
+        docker build -t myapp .
+        docker tag myapp Labcontainer.azurecr.io/myapp:latest
+
+    - name: Empurrar a Imagem para o Registro de Container
+      run: |
+        docker push Labcontainer.azurecr.io/myapp:latest
+
